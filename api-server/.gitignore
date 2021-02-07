@@ -1,0 +1,4 @@
+node_modules
+.dbpath
+jet-logger.log
+dist

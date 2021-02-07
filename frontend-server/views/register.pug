@@ -1,0 +1,25 @@
+extends layout
+block content
+    div( class="container mt-5 border-dark")
+        div(class="d-flex justify-content-center")
+            h3 Registo
+        div
+            form(action='/users/register', method='POST')
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Nome:
+                        input(type="text" class="form-control" name="name" required)
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Afiliação:
+                        input(type="text" class="form-control" name="affiliation" required)    
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Email address:
+                        input(type="email" class="form-control" name="email" placeholder="name@example.com" required)
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="inputPassword" class="form-label") Password:
+                        input(type="password" class="form-control" name="password" required)
+                div(class="row justify-content-center")
+                    button(type="submit" class="btn btn-primary") Submit

@@ -1,0 +1,122 @@
+extends layout
+block content
+    nav(class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top")
+        a(class="navbar-brand" href="/") SGR
+        button(class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+            span(class="navbar-toggler-icon")
+        #navbarSupportedContent(class="collapse navbar-collapse")
+            ul(class="navbar-nav mr-auto")
+                li(class="nav-item active")
+                    aa(class="nav-link" href="/advancedsearch")
+                        | Pesquisa Avançada
+                        span(class="sr-only") (current)
+                li(class="nav-item")
+                    a(class="nav-link" href="/admission") Novo Recurso
+                if(user)
+                    li(class="nav-item active")
+                        a(class="nav-link" href="/upload") Upload
+                li(class="nav-item dropdown")
+                    a#navbarDropdown(class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+                        | Dropdown
+                    div(class="dropdown-menu" aria-labelledby="navbarDropdown")
+                        a(class="dropdown-item" href="/personalarea") Os meus Recursos
+                        a(class="dropdown-item" href="/users/changeinfo") Alterar Informaçoes
+                        a(class="dropdown-item" href="/users/changepassword") Alterar Password
+                        div(class="dropdown-divider")
+                        a(class="dropdown-item" href="#") Something else here
+            form(class="form-inline my-2 my-lg-0" action='/search' method='Post')
+                input(class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search")
+                button(class="btn btn-outline-light my-2 my-sm-0" type="submit") Search
+            ul(class="nav navbar-nav navbar-right")
+                li(class="nav-item active")
+                    a(class="nav-link" href="/users/logout") Logout 
+                        svg(xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-left" viewBox="0 0 16 16")
+                            path(fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z")
+                            path(fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z")
+
+
+    - var i = 0
+    div( class="container mt-5 pt-4 border-dark")
+        div(class="d-flex justify-content-center")
+            h3 Admissão de Documentos
+        div
+            form(action=`/changeresource/${resource.id}` method='Post' enctype="multipart/form-data")
+                input(type="hidden" class="form-control" name="id" value=resource.id)
+                input(type="hidden" class="form-control" name="date_uploaded" value=resource.dateUploaded)
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Título:
+                        input(type="text" class="form-control" name="title" value=resource.title)
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Subtítulo:
+                        input(type="text" class="form-control" name="subtitle" value=resource.subtitle)
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Autores:
+                            for auth in resource.authors
+                                div
+                                    input(id=i type="text" class="form-control mt-1" name="authorname" value=auth.name readonly)
+                                    input(class="w3-btn w3-blue-grey mb-3" id=i++ type="button" value="Apagar")
+                        div(class="lista-autores")
+                            div(class="inputautor")
+                                input(type="text" class="form-control mb-3" name="authorname" )
+                        input(class="maisumautor w3-btn w3-blue-grey" type="button" value="Mais Um Autor")
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Data Criação:
+                        input(type=type="date" class="form-control" name="date_created" value=resource.createdAt.split('T')[0])
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Descrição:
+                        textarea(class="form-control" name="description" rows="5" )=resource.description
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Visibilidade:
+                        select(class="form-control" aria-label=".form-select-lg example" name="visibility")
+                           
+                            if(resource.visibility == "private")
+                                option(selected value="private") Private
+                            else
+                                option(value="private") Private
+                            
+                            if(resource.visibility == "public")
+                                option(selected value="public") Public
+                            else
+                                option(value="public") Public
+                            
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Tipo de Documentos:
+                        select(class="form-control" aria-label=".form-select-lg example" name="type")
+                            for t in types
+                                if (resource.type.id == t.id)
+                                    option(selected value=t.id)= t.name
+                                else
+                                    option(value=t.id)= t.name
+                            
+                            
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Selecionar Ficheiros:
+                            for file in resource.files
+                                div
+                                    input(id=i type="text" class="form-control mt-1" name="oldfiles" value=file.filename readonly)
+                                    input(id=i++ class="apagar w3-btn w3-blue-grey mb-3" type="button" value="Apagar")
+                        div
+                            input(name="myFiles" type="file" class="file" multiple data-show-upload="true" data-show-caption="true")
+                
+                div(class="row justify-content-center")
+                    div(class="form-group col-md-8")
+                        label(for="exampleFormControlInput1" class="form-label") Tags:
+                        div(class="lista-tags")
+                            for tag in resource.tags
+                                div 
+                                    input(id=i type="text" class="form-control mt-1" name="tags" value=tag.name readonly)
+                                    input(id=i++ class="apagar w3-btn w3-blue-grey mb-3" type="button" value="Apagar")
+                            div(class="inputtag")
+                                input(type="text" class="form-control mb-3" name="tags" )
+                        input(class="maisumatag w3-btn w3-blue-grey" type="button" value="Mais Uma Tag")
+
+                div(class="row justify-content-center")
+                    button(type="submit" class="btn btn-primary") Submit

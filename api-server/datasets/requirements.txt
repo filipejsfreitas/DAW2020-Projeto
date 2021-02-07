@@ -1,0 +1,4 @@
+uuid
+urllib3
+pandas
+bagit

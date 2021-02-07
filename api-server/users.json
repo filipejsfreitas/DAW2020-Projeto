@@ -1,0 +1,12 @@
+{
+    "users": [
+        {
+            "id": 45375,
+            "name": "diogo",
+            "email": "d@gmail.com",
+            "passwordhash": "sha1$9e5fc721$1$4a3c41f742fe45a1370256c50c556264f83a960d",
+            "type": "student",
+            "affiliation": "UM"
+        }
+    ]
+}
