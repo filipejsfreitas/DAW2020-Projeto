@@ -223,8 +223,10 @@ router.post('/changeresource/:id', upload.array('myFiles'), (req, res) => {
     User.resource(req.params.id, req.cookies.token)
       .then(dados => {
         req.body.oldfiles.forEach(of => {
-          dados.data.files.forEach(f => {
+          dados.data.resource.files.forEach(f => {
             if (of == f.filename) {
+              console.log(JSON.stringify(of))
+              console.log(JSON.stringify(f))
               req.body.files.push(f)
             }
           })
@@ -235,8 +237,13 @@ router.post('/changeresource/:id', upload.array('myFiles'), (req, res) => {
 
         let idRecurso = req.params.id
 
+        axios.patch(process.env.API_URL + '/resources/' + idRecurso + '?token=' + req.cookies.token, { title: req.body.title, subtitle: req.body.subtitle, description: req.body.description, authors: req.body.authors, createdAt: dados.data.resource.createdAt, visibility: req.body.visibility, type: req.body.type, tags: req.body.tags, uploader: dados.data.resource.uploader.id })
+        .catch(error => res.render('error', { error }))
+
         const publicpath = '/fileStore/' + ano + '/' + mes + '/' + dia + '/' + idRecurso + '/';
         const dirp = __dirname + '/../public/fileStore/' + ano + '/' + mes + '/' + dia + '/' + idRecurso + '/';
+
+
         fs.mkdir(dirp, { recursive: true }, (err) => {
           if (err) {
             return console.error(err);

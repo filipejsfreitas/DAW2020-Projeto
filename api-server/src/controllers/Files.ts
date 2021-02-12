@@ -30,3 +30,7 @@ export async function getAllOrCreate(files: { filename: string, path: string }[]
 export function deleteAll(resource: DocumentType<Resource>) {
   return FileModel.deleteMany({ resource }).exec()
 }
+
+export function deleteOne(id: string) {
+  return FileModel.deleteOne({ _id: id }).exec();
+}

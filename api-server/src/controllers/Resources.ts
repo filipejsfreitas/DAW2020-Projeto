@@ -8,6 +8,7 @@ import * as ResourceTypes from './ResourceTypes';
 import { User } from '@models/User';
 import { FilterQuery } from 'mongoose';
 import { DocumentType } from '@typegoose/typegoose';
+import { isBuffer } from 'util';
 
 interface ResourceCreate {
   title: string,
@@ -17,11 +18,11 @@ interface ResourceCreate {
   type: string,
   tags: string[],
   authors: string[],
-  createdAt: string
+  createdAt: string | undefined
 }
 
 interface ResourceUpdate extends ResourceCreate {
-  visibilityOption: 'public' | null | undefined
+  visibility: 'public' | 'private' | null | undefined
 }
 
 export async function list(user: Express.User | undefined) {
@@ -120,7 +121,7 @@ export async function getUserResources(user: DocumentType<User>, restrictPublic?
 }
 
 export async function update(resource: DocumentType<Resource>, resourceData: ResourceUpdate) {
-  const { title, subtitle, description, uploader, type, tags, visibilityOption, authors, createdAt } = resourceData;
+  const { title, subtitle, description, uploader, type, tags, visibility, authors, createdAt } = resourceData;
 
   const data = {
     title,
@@ -130,17 +131,24 @@ export async function update(resource: DocumentType<Resource>, resourceData: Res
     type: await ResourceTypes.getByNameOrCreate(type),
     authors: await Authors.getAllOrCreate(authors),
     tags: await Tags.getAllOrCreate(tags),
-    visibility: visibilityOption ?? resource.visibility,
-    files: [],
-    createdAt
+    visibility: visibility ?? resource.visibility,
+    createdAt: createdAt ?? resource.createdAt, 
   }
 
   return await resource.update(data).exec()
 }
 
-export async function addFiles(resource: DocumentType<Resource>, files: { filename: string, path: string }[]) {
+export async function addFiles(resource: DocumentType<Resource>, files: { id?: string, filename: string, path: string }[]) {
+  for(const file of resource.files) {
+    if(!files.find(f => f.filename === file.filename)) {
+      await Files.deleteOne(file.id.toHexString());
+    }
+  }
+
   for(const f of files) {
-    resource.files.push(await Files.insert(f.filename, f.path))
+    if(!resource.files.find(file => file.filename === f.filename)) {
+      resource.files.push(await Files.insert(f.filename, f.path))
+    }
   }
 
   return (await resource.save()).files

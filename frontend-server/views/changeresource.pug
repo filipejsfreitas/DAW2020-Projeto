@@ -42,7 +42,6 @@ block content
         div
             form(action=`/changeresource/${resource.id}` method='Post' enctype="multipart/form-data")
                 input(type="hidden" class="form-control" name="id" value=resource.id)
-                input(type="hidden" class="form-control" name="date_uploaded" value=resource.dateUploaded)
                 div(class="row justify-content-center")
                     div(class="form-group col-md-8")
                         label(for="exampleFormControlInput1" class="form-label") Título:
@@ -65,7 +64,7 @@ block content
                 div(class="row justify-content-center")
                     div(class="form-group col-md-8")
                         label(for="exampleFormControlInput1" class="form-label") Data Criação:
-                        input(type=type="date" class="form-control" name="date_created" value=resource.createdAt.split('T')[0])
+                        input(type=type="date" class="form-control" name="createdAt" value=resource.createdAt.split('T')[0])
                 div(class="row justify-content-center")
                     div(class="form-group col-md-8")
                         label(for="exampleFormControlInput1" class="form-label") Descrição:
@@ -91,9 +90,9 @@ block content
                         select(class="form-control" aria-label=".form-select-lg example" name="type")
                             for t in types
                                 if (resource.type.id == t.id)
-                                    option(selected value=t.id)= t.name
+                                    option(selected value=t.name)= t.name
                                 else
-                                    option(value=t.id)= t.name
+                                    option(value=t.name)= t.name
                             
                             
                 div(class="row justify-content-center")
